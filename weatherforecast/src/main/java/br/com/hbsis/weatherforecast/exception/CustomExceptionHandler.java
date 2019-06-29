@@ -15,4 +15,11 @@ public class CustomExceptionHandler {
     String colorNotFoundHandler(ColorNotFoundException ex){
         return ex.getMessage();
     }
+
+    @ResponseBody
+    @ExceptionHandler(CityOpenWeatherNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String cityOpenWeatherNotFoundHandler(CityOpenWeatherNotFound ex){
+        return ex.getMessage();
+    }
 }
