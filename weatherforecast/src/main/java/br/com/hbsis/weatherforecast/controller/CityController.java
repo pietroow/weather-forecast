@@ -3,7 +3,7 @@ package br.com.hbsis.weatherforecast.controller;
 import br.com.hbsis.weatherforecast.model.City;
 import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
-import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
+import br.com.hbsis.weatherforecast.model.dto.custom.DayForecast;
 import br.com.hbsis.weatherforecast.service.CityService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/city")
@@ -49,13 +50,18 @@ public class CityController {
     }
 
     @GetMapping("/openWeather/{cityId}")
-    public WeatherResponseDTO consumeOpenWeatherApi(@PathVariable("cityId") String cityId) {
+    public List<DayForecast> consumeOpenWeatherApi(@PathVariable("cityId") String cityId) {
         return cityService.getForecastByCityId(cityId);
     }
 
     @GetMapping("/local")
     public List<City> findAll(){
         return cityService.findAllLocal();
+    }
+
+    @DeleteMapping("/{cityId}")
+    public void deleteCityById(@PathVariable("cityId")UUID id){
+        cityService.deleteById(id);
     }
 
 }

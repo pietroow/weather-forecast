@@ -2,13 +2,13 @@ package br.com.hbsis.weatherforecast.model.dto;
 
 public class CityForm {
 
-    private Long id;
+    private Long cityId;
 
-    public Long getId() {
-        return id;
+    public Long getCityId() {
+        return cityId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
     }
 }

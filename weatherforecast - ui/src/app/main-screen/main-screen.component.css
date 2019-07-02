@@ -3,12 +3,29 @@
     max-width: 500px;
     width: 100%;
   }
-  
+
   .example-full-width {
     width: 100%;
   } */
 
   table {
     width: 70%;
-    
   }
+
+  .city-search{
+    width: 30%;
+  }
+
+  .align-content-center{
+    text-align: center;
+  }
+/*
+  .align-body-center{
+    height: 10em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  } */
+
+

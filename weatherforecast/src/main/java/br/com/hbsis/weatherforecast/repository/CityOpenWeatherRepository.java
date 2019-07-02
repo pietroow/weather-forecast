@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface CityOpenWeatherRepository extends JpaRepository<CityOpenWeather, Long> {
 
-    List<CityOpenWeather> findByNameIgnoreCaseContainingAndCountryIgnoreCaseContaining(String name, String country);
+    List<CityOpenWeather> findByNameIgnoreCaseContainingAndCountryIgnoreCaseContainingOrderByNameAsc(String name, String country);
 }
