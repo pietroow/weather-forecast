@@ -1,12 +1,9 @@
 package br.com.hbsis.weatherforecast.model;
 
 import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
-import org.springframework.beans.BeanUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -16,11 +13,10 @@ public class City {
     @Id
     private UUID id;
 
-    @Column(name = "city_id")
-    private Long cityId;
-
-    private String name;
-    private String country;
+    @ManyToOne
+    @JoinColumn(name = "city_open_weather_id")
+    @JsonProperty("city_open_weather")
+    private CityOpenWeather cityOpenWeather;
 
     private City() {
         this.id = UUID.randomUUID();
@@ -28,7 +24,7 @@ public class City {
 
     public City(CityOpenWeather cityOpenWeather) {
         this();
-        BeanUtils.copyProperties(cityOpenWeather, this);
+        this.cityOpenWeather = cityOpenWeather;
     }
 
     public UUID getId() {
@@ -39,27 +35,11 @@ public class City {
         this.id = id;
     }
 
-    public Long getCityId() {
-        return cityId;
+    public CityOpenWeather getCityOpenWeather() {
+        return cityOpenWeather;
     }
 
-    public void setCityId(Long cityId) {
-        this.cityId = cityId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCityOpenWeather(CityOpenWeather cityOpenWeather) {
+        this.cityOpenWeather = cityOpenWeather;
     }
 }
