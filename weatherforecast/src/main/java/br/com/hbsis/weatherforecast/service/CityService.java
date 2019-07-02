@@ -4,36 +4,57 @@ import br.com.hbsis.weatherforecast.exception.CityOpenWeatherNotFound;
 import br.com.hbsis.weatherforecast.model.City;
 import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
+import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
+import br.com.hbsis.weatherforecast.repository.CityOpenWeatherRepository;
 import br.com.hbsis.weatherforecast.repository.CityRepository;
-import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class CityService {
 
     private static final String COMMA = ",";
-    private CityRepository cityRepository;
-    private List<CityOpenWeather> cities;
+    private final CityOpenWeatherRepository cityOpenWeatherRepository;
+    private final CityRepository cityRepository;
 
-    public CityService(CityRepository cityRepository) {
+    public CityService(CityOpenWeatherRepository cityOpenWeatherRepository, CityRepository cityRepository) {
+        this.cityOpenWeatherRepository = cityOpenWeatherRepository;
         this.cityRepository = cityRepository;
-        this.cities = Lists.newArrayList();
     }
 
     public List<CityOpenWeather> findByName(String value) {
         CityOpenWeather cityOpenWeather = getFinalValueSearch(value);
-        return this.cities.stream()
-                .filter(obj -> obj.getName().toLowerCase().contains(cityOpenWeather.getName().toLowerCase()))
-                .filter(obj -> obj.getCountry().toLowerCase().contains(cityOpenWeather.getCountry().toLowerCase()))
-                .sorted(Comparator.comparing(CityOpenWeather::getName))
-                .sorted(Comparator.comparing(CityOpenWeather::getCountry))
-                .collect(Collectors.toList());
+        return cityOpenWeatherRepository.findByNameIgnoreCaseContainingAndCountryIgnoreCaseContaining(cityOpenWeather.getName(), cityOpenWeather.getCountry());
+    }
+
+    public CityOpenWeather findById(Long id) {
+        return cityOpenWeatherRepository.findById(id)
+                .orElseThrow(() -> new CityOpenWeatherNotFound(id));
+    }
+
+    public City registerCity(CityForm cityForm) {
+        CityOpenWeather cityFound = findById(cityForm.getId());
+        return cityRepository.save(new City(cityFound));
+    }
+
+    public void saveAll(List<CityOpenWeather> cityOpenWeathers) {
+        cityOpenWeatherRepository.saveAll(cityOpenWeathers);
+    }
+
+    public List<CityOpenWeather> findAll() {
+        return cityOpenWeatherRepository.findAll();
+    }
+
+    public WeatherResponseDTO getForecastByCityId(String cityId) {
+        String apiKey = "eb8b1a9405e659b2ffc78f0a520b1a46";
+        String unit = "metric";
+        String url = String.format("http://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&appid=%s", cityId, unit, apiKey);
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForObject(url, WeatherResponseDTO.class);
     }
 
     private CityOpenWeather getFinalValueSearch(String value) {
@@ -51,21 +72,7 @@ public class CityService {
         return new CityOpenWeather(citySearch, countrySearch);
     }
 
-    public void loadCities(List<CityOpenWeather> citiesJson) {
-        this.cities = citiesJson;
-    }
-
-    public City registerCity(CityForm cityForm) {
-//        CityOpenWeather cityOpenWeather = this.cities.stream()
-//                .filter(city -> city.getId().equals(cityForm.getId()))
-//                .findFirst()
-//                .orElseThrow(() -> new CityOpenWeatherNotFound(cityForm.getId()));
-//
-//        return cityRepository.save(new City(cityForm.get));
-        return null;
-    }
-
-    public void saveAll(List<CityOpenWeather> cityOpenWeathers) {
-        cityRepository.saveAll(cityOpenWeathers);
+    public List<City> findAllLocal() {
+        return cityRepository.findAll();
     }
 }

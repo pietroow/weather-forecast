@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Objects;
 
 @Entity
 @Table(name = "city_api_openweather", schema = "weatherforecast")
@@ -23,7 +22,7 @@ public class CityOpenWeather {
     @JsonProperty("country")
     private String country;
 
-    private CityOpenWeather() {
+    public CityOpenWeather() {
     }
 
     public CityOpenWeather(String citySearch, String countrySearch) {
