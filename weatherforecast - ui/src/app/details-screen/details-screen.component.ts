@@ -15,7 +15,9 @@ export class DetailsScreenComponent implements OnInit {
   detail: any;
   weatherChart: any;
   columns: any[];
-  temperatures: any[];
+  minTemperatures: any[];
+  maxTemperatures: any[];
+  weatherDescription: any[];
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -36,8 +38,7 @@ export class DetailsScreenComponent implements OnInit {
   loadWeatherForecast() {
     this._weatherService.detail(this.cityId).then(res => {
       this.detail = res;
-      this.manipulateDays();
-      this.manipulateTemperature();
+      this.getGraphicData();
       this.mountWeatherForecast();
     })
       .catch(err => {
@@ -45,41 +46,55 @@ export class DetailsScreenComponent implements OnInit {
       });
   }
 
-  manipulateDays() {
-    this.columns = this.detail.list.map( obj => obj.dt_txt);
+  getGraphicData() {
+    console.log(this.detail);
+    const dates = this.detail.map(obj => obj.date);
+    this.minTemperatures = this.detail.map(obj => obj.temp_min);
+    this.maxTemperatures = this.detail.map(obj => obj.temp_max);
+    // this.weatherDescription = this.detail.list.map(obj => obj.weather[0].main);
+
+    var options = { day: 'numeric', month: 'long', weekday: 'long'};
+
+    let datasformatadas = [];
+    dates.forEach(element => {
+      let date = new Date(element);
+      datasformatadas.push(date.toLocaleDateString('pt', options));
+    });
+    this.columns = datasformatadas;
   }
 
-  manipulateTemperature() {
-    this.temperatures = this.detail.list.map( obj => obj.main.temp_max);
-  }
 
   mountWeatherForecast() {
     this.weatherChart = new Chart('myChart', {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: this.columns,
-        datasets: [{
-          label: 'Max Temperature',
-          data: this.temperatures,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-          ],
-          borderWidth: 1,
-          type: 'line'
-        }]
+        datasets: [
+          {
+            label: 'Max Temperature',
+            data: this.maxTemperatures,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+            ],
+            borderWidth: 1,
+            type: 'bar'
+          },
+          {
+            label: 'Min Temperature',
+            data: this.minTemperatures,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+            ],
+            borderWidth: 1,
+            type: 'bar'
+          },
+        ]
       },
       options: {
         scales: {

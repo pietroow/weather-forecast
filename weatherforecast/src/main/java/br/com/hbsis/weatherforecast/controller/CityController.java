@@ -3,7 +3,7 @@ package br.com.hbsis.weatherforecast.controller;
 import br.com.hbsis.weatherforecast.model.City;
 import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
-import br.com.hbsis.weatherforecast.model.dto.custom.DayForecast;
+import br.com.hbsis.weatherforecast.model.dto.custom.CustomResponse;
 import br.com.hbsis.weatherforecast.service.CityService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class CityController {
     }
 
     @GetMapping("/openWeather/{cityId}")
-    public List<DayForecast> consumeOpenWeatherApi(@PathVariable("cityId") String cityId) {
+    public CustomResponse consumeOpenWeatherApi(@PathVariable("cityId") String cityId) {
         return cityService.getForecastByCityId(cityId);
     }
 

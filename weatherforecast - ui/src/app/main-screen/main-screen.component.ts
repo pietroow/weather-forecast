@@ -77,7 +77,7 @@ export class MainScreenComponent implements OnInit {
 
   detail(cityId: number) {
     console.log(cityId);
-    this.weatherService.detail(cityId).subscribe(res => {
+    this.weatherService.detail(cityId).then(res => {
       this._route.navigate([`details/${cityId}`]);
     });
   }

@@ -4,13 +4,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Embedded;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class WeatherInfo {
 
     @Embedded
     @JsonProperty("main")
     private WeatherMainDTO main;
+
+    @JsonProperty("weather")
+    private List<WeatherDescriptionDTO> weather;
 
     @JsonProperty("dt_txt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -25,6 +30,14 @@ public class WeatherInfo {
 
     public void setMain(WeatherMainDTO main) {
         this.main = main;
+    }
+
+    public List<WeatherDescriptionDTO> getWeather() {
+        return weather;
+    }
+
+    public void setWeather(List<WeatherDescriptionDTO> weather) {
+        this.weather = weather;
     }
 
     public LocalDateTime getDateTime() {

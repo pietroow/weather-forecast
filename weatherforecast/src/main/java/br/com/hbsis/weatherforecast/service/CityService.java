@@ -4,6 +4,7 @@ import br.com.hbsis.weatherforecast.exception.CityOpenWeatherNotFound;
 import br.com.hbsis.weatherforecast.model.City;
 import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
+import br.com.hbsis.weatherforecast.model.dto.custom.CustomResponse;
 import br.com.hbsis.weatherforecast.model.dto.custom.DayForecast;
 import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
 import br.com.hbsis.weatherforecast.repository.CityOpenWeatherRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,14 +61,13 @@ public class CityService {
         return cityOpenWeatherRepository.findAll();
     }
 
-    public List<DayForecast> getForecastByCityId(String cityId) {
+    public CustomResponse getForecastByCityId(String cityId) {
         String apiKey = "eb8b1a9405e659b2ffc78f0a520b1a46";
         String unit = "metric";
         String url = String.format("http://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&appid=%s", cityId, unit, apiKey);
         RestTemplate restTemplate = new RestTemplate();
-        WeatherResponseDTO forObject = restTemplate.getForObject(url, WeatherResponseDTO.class);
-        List<DayForecast> convert = new DayForecast().convert(forObject.getDetails());
-        return convert;
+        WeatherResponseDTO response = restTemplate.getForObject(url, WeatherResponseDTO.class);
+        return new DayForecast().convert(Objects.requireNonNull(response));
     }
 
     private CityOpenWeather getFinalValueSearch(String value) {

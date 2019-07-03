@@ -1,12 +1,16 @@
 package br.com.hbsis.weatherforecast.model.dto.custom;
 
-import br.com.hbsis.weatherforecast.model.dto.response.WeatherInfo;
 import br.com.hbsis.weatherforecast.model.dto.response.WeatherMainDTO;
+import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class DayForecast {
 
@@ -36,14 +40,14 @@ public class DayForecast {
         this.humidity = humidity;
     }
 
-    public List<DayForecast> convert(List<WeatherInfo> infos) {
+    public CustomResponse convert(WeatherResponseDTO infos) {
         HashMap<Integer, List<DayForecast>> byDate = new HashMap<>();
 
-        infos.forEach(weatherInfo -> {
+        infos.getDetails().forEach(weatherInfo -> {
             LocalDate date = weatherInfo.getDateTime().toLocalDate();
             int dayOfMonth = date.getDayOfMonth();
-
             WeatherMainDTO main = weatherInfo.getMain();
+
             if (byDate.containsKey(dayOfMonth)) {
                 DayForecast dayForecast = new DayForecast(date, main.getTemperature(), main.getTemperatureMin(), main.getTemperatureMax(), main.getHumidity());
                 List<DayForecast> dayForecasts = byDate.get(dayOfMonth);
@@ -61,12 +65,12 @@ public class DayForecast {
         byDate.forEach((integer, dayForecasts) -> {
             Double minTemp = getMinimumTemperature(dayForecasts);
             Double maxTemp = getMaximumTemperature(dayForecasts);
-            Double avgTemp = getAverageTemperature(dayForecasts);
+            Double avgTemp = getAverageTemperature(minTemp, maxTemp);
             Double avgHumidity = getAverageHumidity(dayForecasts);
             finalList.add(new DayForecast(dayForecasts.get(0).getDate(), avgTemp, minTemp, maxTemp, avgHumidity));
         });
 
-        return finalList;
+        return new CustomResponse(finalList, infos.getCity());
     }
 
     private double getAverageHumidity(List<DayForecast> dayForecasts) {
@@ -76,16 +80,13 @@ public class DayForecast {
                 .getAsDouble();
     }
 
-    private double getAverageTemperature(List<DayForecast> dayForecasts) {
-        return dayForecasts.stream()
-                .mapToDouble(DayForecast::getTemperatureMin)
-                .average()
-                .getAsDouble();
+    private double getAverageTemperature(Double minTemp, Double maxTemp) {
+        return (minTemp + maxTemp) / 2;
     }
 
     private Double getMaximumTemperature(List<DayForecast> dayForecasts) {
         return dayForecasts.stream()
-                .map(DayForecast::getTemperatureMin)
+                .map(DayForecast::getTemperatureMax)
                 .max(Comparator.naturalOrder())
                 .get();
     }
@@ -106,7 +107,9 @@ public class DayForecast {
     }
 
     public Double getTemperature() {
-        return temperature;
+        return BigDecimal.valueOf(temperature)
+                .setScale(0, RoundingMode.UP)
+                .doubleValue();
     }
 
     public void setTemperature(Double temperature) {
@@ -114,7 +117,9 @@ public class DayForecast {
     }
 
     public Double getTemperatureMin() {
-        return temperatureMin;
+        return BigDecimal.valueOf(temperatureMin)
+                .setScale(0, RoundingMode.UP)
+                .doubleValue();
     }
 
     public void setTemperatureMin(Double temperatureMin) {
@@ -122,7 +127,9 @@ public class DayForecast {
     }
 
     public Double getTemperatureMax() {
-        return temperatureMax;
+        return BigDecimal.valueOf(temperatureMax)
+                .setScale(0, RoundingMode.UP)
+                .doubleValue();
     }
 
     public void setTemperatureMax(Double temperatureMax) {
@@ -130,7 +137,9 @@ public class DayForecast {
     }
 
     public Double getHumidity() {
-        return humidity;
+        return BigDecimal.valueOf(humidity)
+                .setScale(0, RoundingMode.UP)
+                .doubleValue();
     }
 
     public void setHumidity(Double humidity) {
