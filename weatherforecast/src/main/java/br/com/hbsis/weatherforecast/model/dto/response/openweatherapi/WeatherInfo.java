@@ -1,10 +1,9 @@
-package br.com.hbsis.weatherforecast.model.dto.response;
+package br.com.hbsis.weatherforecast.model.dto.response.openweatherapi;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Embedded;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 

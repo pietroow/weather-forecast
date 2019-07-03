@@ -1,6 +1,6 @@
 package br.com.hbsis.weatherforecast;
 
-import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
+import br.com.hbsis.weatherforecast.model.CityOpenWeather;
 import br.com.hbsis.weatherforecast.service.CityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;

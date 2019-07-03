@@ -1,6 +1,6 @@
-package br.com.hbsis.weatherforecast.model.dto.custom;
+package br.com.hbsis.weatherforecast.model.dto.response.custom;
 
-import br.com.hbsis.weatherforecast.model.dto.response.CityResponseDTO;
+import br.com.hbsis.weatherforecast.model.dto.response.openweatherapi.CityResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -13,7 +13,11 @@ public class CustomResponse {
     @JsonProperty("city")
     private CityResponseDTO city;
 
+    private CustomResponse() {
+    }
+
     public CustomResponse(List<DayForecast> finalList, CityResponseDTO city) {
+        this();
         this.city = city;
         this.details = finalList;
     }

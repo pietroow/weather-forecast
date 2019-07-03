@@ -3,10 +3,10 @@ package br.com.hbsis.weatherforecast.service;
 import br.com.hbsis.weatherforecast.exception.CityOpenWeatherNotFound;
 import br.com.hbsis.weatherforecast.model.City;
 import br.com.hbsis.weatherforecast.model.dto.CityForm;
-import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
-import br.com.hbsis.weatherforecast.model.dto.custom.CustomResponse;
-import br.com.hbsis.weatherforecast.model.dto.custom.DayForecast;
-import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
+import br.com.hbsis.weatherforecast.model.CityOpenWeather;
+import br.com.hbsis.weatherforecast.model.dto.response.custom.CustomResponse;
+import br.com.hbsis.weatherforecast.model.dto.response.custom.DayForecast;
+import br.com.hbsis.weatherforecast.model.dto.response.openweatherapi.WeatherResponseDTO;
 import br.com.hbsis.weatherforecast.repository.CityOpenWeatherRepository;
 import br.com.hbsis.weatherforecast.repository.CityRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,12 +19,15 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static br.com.hbsis.weatherforecast.util.Util.formatSearchInputToClass;
+
 @Service
 @Transactional
 public class CityService {
 
-    private static final String COMMA = ",";
-    public static final String BLANK = " ";
+    private static final String OPEN_WEATHER_URL = "http://api.openweathermap.org/data/2.5/forecast";
+    private static final String API_KEY = "eb8b1a9405e659b2ffc78f0a520b1a46";
+    private static final String UNIT = "metric";
     private final CityOpenWeatherRepository cityOpenWeatherRepository;
     private final CityRepository cityRepository;
 
@@ -34,7 +37,7 @@ public class CityService {
     }
 
     public List<CityOpenWeather> findByName(String value) {
-        CityOpenWeather cityOpenWeather = getFinalValueSearch(value);
+        CityOpenWeather cityOpenWeather = formatSearchInputToClass(value);
         List<CityOpenWeather> cities = cityOpenWeatherRepository.findByNameIgnoreCaseContainingAndCountryIgnoreCaseContainingOrderByNameAsc(cityOpenWeather.getName(), cityOpenWeather.getCountry());
         return cities.stream().limit(50).collect(Collectors.toList());
     }
@@ -47,14 +50,11 @@ public class CityService {
     public City registerCity(CityForm cityForm) {
         cityRepository.findByCityOpenWeatherId(cityForm.getCityId())
                 .ifPresent(city -> {
-                    throw new DataIntegrityViolationException("This data already exists!");
+                    throw new DataIntegrityViolationException("This city is already registered!");
                 });
         CityOpenWeather cityFound = findById(cityForm.getCityId());
-        return cityRepository.save(new City(cityFound));
-    }
-
-    public void saveAll(List<CityOpenWeather> cityOpenWeathers) {
-        cityOpenWeatherRepository.saveAll(cityOpenWeathers);
+        City city = new City(cityFound);
+        return cityRepository.save(city);
     }
 
     public List<CityOpenWeather> findAll() {
@@ -62,32 +62,10 @@ public class CityService {
     }
 
     public CustomResponse getForecastByCityId(String cityId) {
-        String apiKey = "eb8b1a9405e659b2ffc78f0a520b1a46";
-        String unit = "metric";
-        String url = String.format("http://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&appid=%s", cityId, unit, apiKey);
+        String url = String.format(OPEN_WEATHER_URL+"?id=%s&units=%s&appid=%s", cityId, UNIT, API_KEY);
         RestTemplate restTemplate = new RestTemplate();
         WeatherResponseDTO response = restTemplate.getForObject(url, WeatherResponseDTO.class);
-        return new DayForecast().convert(Objects.requireNonNull(response));
-    }
-
-    private CityOpenWeather getFinalValueSearch(String value) {
-        String citySearch = "";
-        String countrySearch = "";
-
-        if (!value.contains(COMMA)) {
-            citySearch = value;
-        } else {
-            String[] split = value.split(COMMA);
-            citySearch = split[0].replace(" ", "");
-            if (!isLastCharCommaOrBlank(value)) {
-                countrySearch = split[1].isEmpty() ? "" : split[1].replace(" ", "");
-            }
-        }
-        return new CityOpenWeather(citySearch, countrySearch);
-    }
-
-    private boolean isLastCharCommaOrBlank(String value) {
-        return value.endsWith(COMMA) || value.endsWith(BLANK);
+        return DayForecast.convert(Objects.requireNonNull(response));
     }
 
     public List<City> findAllLocal() {
@@ -96,5 +74,9 @@ public class CityService {
 
     public void deleteById(UUID id) {
         cityRepository.deleteById(id);
+    }
+
+    public void saveAll(List<CityOpenWeather> cityOpenWeathers) {
+        cityOpenWeatherRepository.saveAll(cityOpenWeathers);
     }
 }

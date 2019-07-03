@@ -1,16 +1,18 @@
-package br.com.hbsis.weatherforecast.model.dto.custom;
+package br.com.hbsis.weatherforecast.model.dto.response.custom;
 
-import br.com.hbsis.weatherforecast.model.dto.response.WeatherMainDTO;
-import br.com.hbsis.weatherforecast.model.dto.response.WeatherResponseDTO;
+import br.com.hbsis.weatherforecast.model.dto.response.openweatherapi.WeatherMainDTO;
+import br.com.hbsis.weatherforecast.model.dto.response.openweatherapi.WeatherResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+
+import static br.com.hbsis.weatherforecast.util.Util.*;
 
 public class DayForecast {
 
@@ -32,15 +34,7 @@ public class DayForecast {
     public DayForecast() {
     }
 
-    public DayForecast(LocalDate date, Double temperature, Double temperatureMin, Double temperatureMax, Double humidity) {
-        this.date = date;
-        this.temperature = temperature;
-        this.temperatureMin = temperatureMin;
-        this.temperatureMax = temperatureMax;
-        this.humidity = humidity;
-    }
-
-    public CustomResponse convert(WeatherResponseDTO infos) {
+    public static CustomResponse convert(WeatherResponseDTO infos) {
         HashMap<Integer, List<DayForecast>> byDate = new HashMap<>();
 
         infos.getDetails().forEach(weatherInfo -> {
@@ -49,53 +43,41 @@ public class DayForecast {
             WeatherMainDTO main = weatherInfo.getMain();
 
             if (byDate.containsKey(dayOfMonth)) {
-                DayForecast dayForecast = new DayForecast(date, main.getTemperature(), main.getTemperatureMin(), main.getTemperatureMax(), main.getHumidity());
+                DayForecast dayForecast = copyProperties(main, date);
                 List<DayForecast> dayForecasts = byDate.get(dayOfMonth);
                 dayForecasts.add(dayForecast);
             } else {
                 List<DayForecast> dayForecasts = new ArrayList<>();
-                DayForecast dayForecast = new DayForecast(date, main.getTemperature(), main.getTemperatureMin(), main.getTemperatureMax(), main.getHumidity());
+                DayForecast dayForecast = copyProperties(main, date);
                 dayForecasts.add(dayForecast);
                 byDate.put(dayOfMonth, dayForecasts);
             }
         });
 
-        List<DayForecast> finalList = new ArrayList<>();
+        List<DayForecast> resultList = new ArrayList<>();
 
         byDate.forEach((integer, dayForecasts) -> {
             Double minTemp = getMinimumTemperature(dayForecasts);
             Double maxTemp = getMaximumTemperature(dayForecasts);
             Double avgTemp = getAverageTemperature(minTemp, maxTemp);
             Double avgHumidity = getAverageHumidity(dayForecasts);
-            finalList.add(new DayForecast(dayForecasts.get(0).getDate(), avgTemp, minTemp, maxTemp, avgHumidity));
+            resultList.add(
+                    DayForecastBuilder.aDayForecast()
+                            .withDate(dayForecasts.stream().findFirst().get().getDate())
+                            .withTemperature(avgTemp)
+                            .withTemperatureMin(minTemp)
+                            .withTemperatureMax(maxTemp)
+                            .withHumidity(avgHumidity)
+                            .build());
         });
-
-        return new CustomResponse(finalList, infos.getCity());
+        return new CustomResponse(resultList, infos.getCity());
     }
 
-    private double getAverageHumidity(List<DayForecast> dayForecasts) {
-        return dayForecasts.stream()
-                .mapToDouble(DayForecast::getHumidity)
-                .average()
-                .getAsDouble();
-    }
-
-    private double getAverageTemperature(Double minTemp, Double maxTemp) {
-        return (minTemp + maxTemp) / 2;
-    }
-
-    private Double getMaximumTemperature(List<DayForecast> dayForecasts) {
-        return dayForecasts.stream()
-                .map(DayForecast::getTemperatureMax)
-                .max(Comparator.naturalOrder())
-                .get();
-    }
-
-    private Double getMinimumTemperature(List<DayForecast> dayForecasts) {
-        return dayForecasts.stream()
-                .map(DayForecast::getTemperatureMin)
-                .min(Comparator.naturalOrder())
-                .get();
+    private static DayForecast copyProperties(WeatherMainDTO weatherMainDTO, LocalDate date) {
+        DayForecast dayForecast = new DayForecast();
+        BeanUtils.copyProperties(weatherMainDTO, dayForecast);
+        dayForecast.setDate(date);
+        return dayForecast;
     }
 
     public LocalDate getDate() {

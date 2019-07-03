@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WeatherService } from '../shared/weather.service';
 import { Chart } from 'chart.js';
@@ -11,6 +11,7 @@ import { Chart } from 'chart.js';
 })
 export class DetailsScreenComponent implements OnInit {
 
+  city: {};
   cityId: number;
   detail: any;
   weatherChart: any;
@@ -35,6 +36,10 @@ export class DetailsScreenComponent implements OnInit {
     });
   }
 
+  backPage() {
+    this._router.navigate(['']);
+  }
+
   loadWeatherForecast() {
     this._weatherService.detail(this.cityId).then(res => {
       this.detail = res;
@@ -47,13 +52,18 @@ export class DetailsScreenComponent implements OnInit {
   }
 
   getGraphicData() {
-    console.log(this.detail);
-    const dates = this.detail.map(obj => obj.date);
-    this.minTemperatures = this.detail.map(obj => obj.temp_min);
-    this.maxTemperatures = this.detail.map(obj => obj.temp_max);
+    const dates = this.detail.list.map(obj => obj.date);
+    this.minTemperatures = this.detail.list.map(obj => obj.temp_min);
+    this.maxTemperatures = this.detail.list.map(obj => obj.temp_max);
+
+    this.city = {
+      name: this.detail.city.name,
+      country: this.detail.city.country
+    }
+    // console.log(this.detail.city.name);
     // this.weatherDescription = this.detail.list.map(obj => obj.weather[0].main);
 
-    var options = { day: 'numeric', month: 'long', weekday: 'long'};
+    var options = { day: 'numeric', month: 'long', weekday: 'long' };
 
     let datasformatadas = [];
     dates.forEach(element => {
@@ -75,25 +85,91 @@ export class DetailsScreenComponent implements OnInit {
             data: this.maxTemperatures,
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
             ],
             borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
               'rgba(255, 99, 132, 1)',
             ],
             borderWidth: 1,
             type: 'bar'
           },
           {
-            label: 'Min Temperature',
-            data: this.minTemperatures,
+            label: 'Max Temperature - Line',
+            data: this.maxTemperatures,
+            fill: false,
             backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
               'rgba(255, 99, 132, 0.2)',
             ],
             borderColor: [
               'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 99, 132, 1)',
+            ],
+            borderWidth: 1,
+            type: 'line'
+          },
+          {
+            label: 'Min Temperature',
+            data: this.minTemperatures,
+            backgroundColor: [
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+            ],
+            borderColor: [
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
             ],
             borderWidth: 1,
             type: 'bar'
           },
+          {
+            label: 'Min Temperature - Line',
+            data: this.minTemperatures,
+            fill: false,
+            backgroundColor: [
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+              'rgba(0, 255, 204, 0.2)',
+            ],
+            borderColor: [
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+              'rgba(0, 255, 204, 1)',
+            ],
+            borderWidth: 1,
+            type: 'line'
+          }
         ]
       },
       options: {
@@ -107,7 +183,5 @@ export class DetailsScreenComponent implements OnInit {
       }
     });
   }
-
-
 
 }

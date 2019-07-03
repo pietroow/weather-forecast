@@ -1,5 +1,19 @@
-<div>
-  <canvas id="myChart">
+<div style="display: flex">
+  <div style="width: 5%">
+    <button mat-mini-fab color="primary" (click)="backPage()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+
+  <div class="target-city">
+    <span>
+      Você está vendo a previsão do tempo para a cidade de: {{ city.name }}, {{ city.country }}
+    </span>
+  </div>
+</div>
+
+<div class="myChart">
+  <canvas id="myChart" #chart>
     {{ weatherChart }}
   </canvas>
 </div>

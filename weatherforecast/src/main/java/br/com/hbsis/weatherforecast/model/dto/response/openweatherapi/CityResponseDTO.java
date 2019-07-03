@@ -1,4 +1,4 @@
-package br.com.hbsis.weatherforecast.model.dto.response;
+package br.com.hbsis.weatherforecast.model.dto.response.openweatherapi;
 
 import javax.persistence.Embeddable;
 

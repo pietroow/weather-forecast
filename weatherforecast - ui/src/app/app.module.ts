@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 import { AppComponent } from './app.component';
@@ -38,7 +39,8 @@ import { AppRoutingModule } from './app-routing.module';
     MatButtonModule,
     MatSnackBarModule,
     AppRoutingModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
