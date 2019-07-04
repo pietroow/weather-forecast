@@ -1,4 +1,4 @@
-##Requisitos:
+## Requisitos:
 * Java 8
 * Maven
 * Git
@@ -8,7 +8,7 @@
 
 ## Configuração e execução:
 
-###Back-end
+### Back-end
 
 1. Fazer o clone do repositório:
 `git clone https://github.com/pietroow/weather-forecast.git`
@@ -22,7 +22,7 @@
     * `spring.datasource.username=postgres `
     * `spring.datasource.password=admin `
 
-    ######obs: Caso o usúario e senha forem diferentes do default, trocar as configurações do flyway e do banco no arquivo `resources/application.properties`
+    ###### obs: Caso o usúario e senha forem diferentes do default, trocar as configurações do flyway e do banco no arquivo `resources/application.properties`
 
 4. Para buildar o projeto é necessário ter o Maven instalado na maquina.
     entre na pasta '/weatherforecast' e digite no terminal `$ mvn clean install`
@@ -36,7 +36,7 @@ será feito o upload do arquivo .json novamente no database local. Este comporta
 9. Por fim, para executarmos o projeto devemos entrar na pasta **/target** e digitar no terminal `java -jar weatherforecast-beta.jar`
 
 
-###Front-end
+### Front-end
 
 * Agora que já estamos com a API rodando e pronto para ser consumida é hora de iniciarmos o nosso front-end.
 
@@ -55,12 +55,12 @@ dependencias da aplicação.
 
 ## Sobre o projeto:
 
-###Funcionamento:
+### Funcionamento:
 * O campo de busca mostra apenas as cidades válidas na API do OpenWeather.
 * É possível cadastrar as cidades do OpenWeather no banco de dados local, para que futuramente seja mais fácil de encontrar
 as cidades já cadastradas.
 
-###Modelagem:
+### Modelagem:
 * O projeto foi baseado na arquitetura REST.
 * O design foi feito seguindo alguns princípios do DDD.
 
