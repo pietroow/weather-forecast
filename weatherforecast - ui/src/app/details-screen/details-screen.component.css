@@ -1,0 +1,16 @@
+.myChart {
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+}
+
+.myCity {
+  text-align: center;
+  padding-top: 2%;
+}
+
+.target-city {
+  width: 90%;
+  text-align: center;
+  padding-top: 0.8em;
+}

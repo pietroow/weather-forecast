@@ -1,6 +1,5 @@
 package br.com.hbsis.weatherforecast.model;
 
-import br.com.hbsis.weatherforecast.model.dto.CityOpenWeather;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -24,6 +23,11 @@ public class City {
 
     public City(CityOpenWeather cityOpenWeather) {
         this();
+        this.cityOpenWeather = cityOpenWeather;
+    }
+
+    public City(UUID id, CityOpenWeather cityOpenWeather) {
+        this.id = id;
         this.cityOpenWeather = cityOpenWeather;
     }
 

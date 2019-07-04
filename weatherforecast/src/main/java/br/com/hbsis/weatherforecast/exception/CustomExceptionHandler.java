@@ -5,21 +5,22 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(ColorNotFoundException.class)
+    @ExceptionHandler(CityOpenWeatherNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String colorNotFoundHandler(ColorNotFoundException ex){
+    String cityOpenWeatherNotFoundHandler(CityOpenWeatherNotFound ex){
         return ex.getMessage();
     }
 
     @ResponseBody
-    @ExceptionHandler(CityOpenWeatherNotFound.class)
+    @ExceptionHandler(HttpClientErrorException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String cityOpenWeatherNotFoundHandler(CityOpenWeatherNotFound ex){
+    String HttpClientErrorException$NotFound(HttpClientErrorException ex){
         return ex.getMessage();
     }
 }

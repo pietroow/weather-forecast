@@ -1,4 +1,4 @@
-package br.com.hbsis.weatherforecast.model.dto.response;
+package br.com.hbsis.weatherforecast.model.dto.response.openweatherapi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,6 +20,13 @@ public class WeatherMainDTO {
     private Double humidity;
 
     public WeatherMainDTO() {
+    }
+
+    public WeatherMainDTO(Double temperature, Double temperatureMin, Double temperatureMax, Double humidity) {
+        this.temperature = temperature;
+        this.temperatureMin = temperatureMin;
+        this.temperatureMax = temperatureMax;
+        this.humidity = humidity;
     }
 
     public Double getTemperature() {

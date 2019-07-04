@@ -1,4 +1,4 @@
-package br.com.hbsis.weatherforecast.model.dto;
+package br.com.hbsis.weatherforecast.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +29,12 @@ public class CityOpenWeather {
         this();
         this.name = citySearch;
         this.country = countrySearch;
+    }
+
+    public CityOpenWeather(Long id, String name, String country) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
     }
 
     public Long getId() {
