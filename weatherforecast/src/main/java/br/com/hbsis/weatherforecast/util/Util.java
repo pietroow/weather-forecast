@@ -13,8 +13,8 @@ public class Util {
     private static final String EMPTY = "";
 
     public static CityOpenWeather formatSearchInputToClass(String value){
-        String citySearch = BLANK;
-        String countrySearch = BLANK;
+        String citySearch = EMPTY;
+        String countrySearch = EMPTY;
 
         if (!value.contains(COMMA)) {
             citySearch = value;

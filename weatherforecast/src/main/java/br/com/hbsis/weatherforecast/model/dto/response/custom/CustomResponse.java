@@ -13,7 +13,7 @@ public class CustomResponse {
     @JsonProperty("city")
     private CityResponseDTO city;
 
-    private CustomResponse() {
+    public CustomResponse() {
     }
 
     public CustomResponse(List<DayForecast> finalList, CityResponseDTO city) {

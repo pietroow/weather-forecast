@@ -7,8 +7,8 @@ import { htmlAstToRender3Ast } from '@angular/compiler/src/render3/r3_template_t
 })
 export class WeatherService {
 
-  url = 'http://192.168.194.15:8190/city';
-  urlOpenWeather = 'http://192.168.194.15:8190/city/openWeather';
+  url = 'http://localhost:8190/city';
+  urlOpenWeather = 'http://localhost:8190/city/openWeather';
 
   constructor(private http: HttpClient) { }
 

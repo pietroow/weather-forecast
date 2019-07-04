@@ -1,16 +1,16 @@
 package br.com.hbsis.weatherforecast.controller;
 
 import br.com.hbsis.weatherforecast.model.City;
-import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.CityOpenWeather;
+import br.com.hbsis.weatherforecast.model.dto.CityForm;
 import br.com.hbsis.weatherforecast.model.dto.response.custom.CustomResponse;
 import br.com.hbsis.weatherforecast.service.CityService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -39,13 +39,14 @@ public class CityController {
 
     @PostMapping
     @ApiOperation("Create a new registry of city in local database using OpenWeather cityId")
-    public ResponseEntity<City> registerCity(@Valid @RequestBody CityForm cityForm) {
+    public ResponseEntity<City> registerCity(@RequestBody CityForm cityForm) {
         City city = cityService.registerCity(cityForm);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(city.getId())
                 .toUri();
+
         return ResponseEntity.created(location).build();
     }
 
@@ -61,6 +62,7 @@ public class CityController {
         return cityService.findAllLocal();
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{cityId}")
     @ApiOperation("Delete a city of database by localId")
     public void deleteCityById(@PathVariable("cityId") UUID id) {

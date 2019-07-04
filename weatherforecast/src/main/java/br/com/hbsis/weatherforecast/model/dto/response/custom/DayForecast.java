@@ -34,6 +34,14 @@ public class DayForecast {
     public DayForecast() {
     }
 
+    public DayForecast(LocalDate date, Double temperature, Double temperatureMin, Double temperatureMax, Double humidity) {
+        this.date = date;
+        this.temperature = temperature;
+        this.temperatureMin = temperatureMin;
+        this.temperatureMax = temperatureMax;
+        this.humidity = humidity;
+    }
+
     public static CustomResponse convert(WeatherResponseDTO infos) {
         HashMap<Integer, List<DayForecast>> byDate = new HashMap<>();
 

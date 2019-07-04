@@ -8,10 +8,16 @@ public class CityResponseDTO {
     private Long id;
     private String name;
     private String country;
-    private Long population;
     private String timezone;
 
     public CityResponseDTO() {
+    }
+
+    public CityResponseDTO(Long id, String name, String country, String timezone) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+        this.timezone = timezone;
     }
 
     public Long getId() {
@@ -36,14 +42,6 @@ public class CityResponseDTO {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public Long getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Long population) {
-        this.population = population;
     }
 
     public String getTimezone() {

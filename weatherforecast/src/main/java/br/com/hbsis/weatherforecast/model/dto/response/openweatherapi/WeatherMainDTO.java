@@ -22,6 +22,13 @@ public class WeatherMainDTO {
     public WeatherMainDTO() {
     }
 
+    public WeatherMainDTO(Double temperature, Double temperatureMin, Double temperatureMax, Double humidity) {
+        this.temperature = temperature;
+        this.temperatureMin = temperatureMin;
+        this.temperatureMax = temperatureMax;
+        this.humidity = humidity;
+    }
+
     public Double getTemperature() {
         return temperature;
     }

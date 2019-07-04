@@ -3,6 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WeatherService } from '../shared/weather.service';
 import { Chart } from 'chart.js';
 
+export class City {
+  name: string;
+  country: string;
+
+  constructor(name: string, country: string){
+    this.name = name;
+    this.country = country;
+  }
+}
 
 @Component({
   selector: 'app-details-screen',
@@ -11,7 +20,7 @@ import { Chart } from 'chart.js';
 })
 export class DetailsScreenComponent implements OnInit {
 
-  city: {};
+  city: City;
   cityId: number;
   detail: any;
   weatherChart: any;
@@ -46,29 +55,21 @@ export class DetailsScreenComponent implements OnInit {
       this.getGraphicData();
       this.mountWeatherForecast();
     })
-      .catch(err => {
-
-      });
   }
 
   getGraphicData() {
     const dates = this.detail.list.map(obj => obj.date);
     this.minTemperatures = this.detail.list.map(obj => obj.temp_min);
     this.maxTemperatures = this.detail.list.map(obj => obj.temp_max);
-
-    this.city = {
-      name: this.detail.city.name,
-      country: this.detail.city.country
-    }
-    // console.log(this.detail.city.name);
-    // this.weatherDescription = this.detail.list.map(obj => obj.weather[0].main);
+    this.city = new City(this.detail.city.name, this.detail.city.country);
 
     var options = { day: 'numeric', month: 'long', weekday: 'long' };
 
     let datasformatadas = [];
     dates.forEach(element => {
       let date = new Date(element);
-      datasformatadas.push(date.toLocaleDateString('pt', options));
+      let dateForm = new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
+      datasformatadas.push(dateForm.toLocaleDateString('pt', options));
     });
     this.columns = datasformatadas;
   }
